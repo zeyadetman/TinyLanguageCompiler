@@ -14,17 +14,25 @@ namespace WindowsFormsApplication11
     {   
         public string tinyCode = "";
         public string[] rsrvdwrds = {"int","float","string","read","write","repeat","until","if","elseif","else","then","return","endl"};
+        
         Dictionary<string, string> tokens = new Dictionary<string, string>()
         {
             {"main","Main_Function"},{"int","Datatype"},{"float","Datatype"},{"string","Datatype"},{":=","AssignmentOperator"},
             {"write","Write_Statement"},{"read","Read_Statement"},{"return","Return_Statement"},{"repeat","Repeat_Statement"},
             {"program","Program"},{"if","If_Statement"},{"elseif","Else_If_Statement"},{"else","Else_Statement"},{"<>","not equal"}
         };
+        
         Dictionary<char, string> operators = new Dictionary<char, string>(){
             {'+',"PlusOperator"},{'-',"MinusOperator"},{'*',"MultiplicationOperator"},{';',"Semicolon"},{'<',"less than"},
             {'>',"greater than"},{'=',"is equal"}
         };
 
+        public void checker(string store, Dictionary<string, string> tokensLocal, string daType)
+        {
+            if (!tokensLocal.ContainsKey(store)) dataGridView1.Rows.Add(store, daType);
+            else dataGridView1.Rows.Add(store, tokensLocal[store]);
+                            
+        }
         public void extract(string tinyCodeLocal, Dictionary<string, string> tokensLocal, Dictionary<char,string> operatorsLocal)
         {
             string lastWord = "";
@@ -62,7 +70,7 @@ namespace WindowsFormsApplication11
                     savedWord += tinyCodeLocal[i];
                     for (int j = ++i; j < tinyCodeLocal.Length; j++)
                     {
-                        if (Char.IsLetter(tinyCodeLocal[j]) || Char.IsDigit(tinyCodeLocal[j])) { savedWord += tinyCodeLocal[j]; }
+                        if (Char.IsLetterOrDigit(tinyCodeLocal[j])) { savedWord += tinyCodeLocal[j]; }
                         else if (tinyCodeLocal[j] == '(')
                         {
                             i = j;
@@ -70,8 +78,9 @@ namespace WindowsFormsApplication11
                             {
                                 if (tokensLocal[lastWord] == "Datatype")
                                 {
-                                    if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "FunctionName");
-                                    else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
+                                    checker(savedWord, tokensLocal, "FunctionName");
+                                    //if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "FunctionName");
+                                    //else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
                                     lastWord = savedWord;
                                     savedWord = "";
                                     break;
@@ -92,11 +101,12 @@ namespace WindowsFormsApplication11
                                 break;
                             }
 
-                        }
+                        } 
                         else if (tinyCodeLocal[j] == ';')
                         {
-                            if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
-                            else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
+                            checker(savedWord, tokensLocal, "Identifier");
+                            //if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
+                            //else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
                             i = j; 
                             dataGridView1.Rows.Add(";", operatorsLocal[';']);
                             lastWord = savedWord;
@@ -113,8 +123,9 @@ namespace WindowsFormsApplication11
                         }
                         else if (tinyCodeLocal[j] == ':' && tinyCodeLocal[j + 1] == '=')
                         {
-                            if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
-                            else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
+                            checker(savedWord, tokensLocal, "Identifier");
+                            //if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
+                            //else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
                             j++; i = j; dataGridView1.Rows.Add(":=", tokensLocal[":="]); lastWord = ":=";
                             savedWord = "";
                             break;
@@ -122,8 +133,9 @@ namespace WindowsFormsApplication11
                         else
                         {
                             i = j;
-                            if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
-                            else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
+                            checker(savedWord, tokensLocal, "Identifier");                            
+                            //if (!tokensLocal.ContainsKey(savedWord)) dataGridView1.Rows.Add(savedWord, "Identifier");
+                            //else dataGridView1.Rows.Add(savedWord, tokensLocal[savedWord]);
                             lastWord = savedWord;
                             savedWord = "";
                             break;
@@ -149,7 +161,6 @@ namespace WindowsFormsApplication11
                 {
                     dataGridView1.Rows.Add(tinyCodeLocal[i], operatorsLocal[tinyCodeLocal[i]]);
                     savedWord = "";
-                    break;
                 }
                 else if (tinyCodeLocal[i] == ':' && tinyCodeLocal[i + 1] == '=') { i++; dataGridView1.Rows.Add(":=", tokensLocal[":="]); }
                 else if (tinyCodeLocal[i] == '/' && tinyCodeLocal[i + 1] == '*')
