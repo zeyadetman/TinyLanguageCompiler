@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -269,8 +270,6 @@ namespace WindowsFormsApplication11
             int ff = dataGridView1.Rows.Count;
             for (int i = 0; i < ff-1; i++)
             {
-                // Khaled Function will replaced below
-                //if (dataGridView1[1, i].Value.ToString() == "Number") MessageBox.Show(dataGridView1[0, i].Value.ToString(), cnvrt2num(string));
                 lexemeANDtokens.Add(new Tuple<string,string>((string)dataGridView1[0, i].Value.ToString(), (string)dataGridView1[1, i].Value.ToString()));
             }
         }
