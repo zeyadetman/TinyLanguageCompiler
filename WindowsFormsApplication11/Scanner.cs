@@ -82,7 +82,7 @@ namespace WindowsFormsApplication11
                         lexeme += tinyCode[j];
                         addtotokens(lexeme, Type.STRING);                    
                     }
-                    i = j-1;
+                    i = j;
                 }
                 else if (tinyCode[i] == '(')
                 {
