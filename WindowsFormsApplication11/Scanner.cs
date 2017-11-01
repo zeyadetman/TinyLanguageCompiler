@@ -84,6 +84,31 @@ namespace WindowsFormsApplication11
                     }
                     i = j;
                 }
+
+                else if (i + 1 < tinyCode.Length && (tinyCode[i] == '/' && tinyCode[i + 1] == '*'))
+                {
+                    int j = i;
+                    lexeme +=tinyCode[j];
+                    lexeme += tinyCode[j + 1];
+                    j += 2;
+                    while (j + 1 < tinyCode.Length && (tinyCode[j] != '*' && tinyCode[j + 1] != '/'))
+                    {
+                        lexeme += tinyCode[j];
+                        j++;
+                    }
+                    if (j + 1 == tinyCode.Length)
+                    {
+                        lexeme += tinyCode[j];
+                        addtotokens(lexeme, Type.ERROR);
+                        i = j;
+                    }
+                    else
+                    {
+                        lexeme += tinyCode[j];
+                        lexeme += tinyCode[j + 1];
+                        addtotokens(lexeme, Type.COMMENT); i = j + 1;
+                    }
+                }
                 else if (tinyCode[i] == '(')
                 {
                     lexeme += tinyCode[i];
