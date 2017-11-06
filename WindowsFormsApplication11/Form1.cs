@@ -46,6 +46,8 @@ namespace WindowsFormsApplication11
             // Refresh the dataGridView
             dataGridView1.Rows.Clear();
             dataGridView1.Refresh();
+            treeView1.Nodes.Clear();
+            treeView1.Refresh();
             //--------------------------
 
             Scanner sc = new Scanner(richTextBox1.Text);
@@ -53,7 +55,11 @@ namespace WindowsFormsApplication11
             int ind = 0;
             for (int i = 0; i < sc.tokens.Count ; i++) dataGridView1.Rows.Add(sc.tokens[i].input,sc.tokens[i].type.ToString());
             for (int i = 0; i < sc.tokens.Count; i++) if (sc.tokens[i].type == Type.ERROR) listBox1.Items.Add("Error in Line " + (ind+1).ToString() + ", using " + sc.tokens[i].input); else if (sc.tokens[i].type == Type.NEWLINE) ind++;
-
+            Parser ps = new Parser();
+            ps.parsing(sc.tokens);
+            //this.treeView1  = (TreeNode) treeView1.Clone();
+            treeView1.Nodes.Add(ps.root);
+            
             //-----------------------------------------
         }
 
@@ -76,6 +82,11 @@ namespace WindowsFormsApplication11
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        public void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
 
         }

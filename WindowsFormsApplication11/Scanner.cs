@@ -124,8 +124,8 @@ namespace WindowsFormsApplication11
                             lexeme += tinyCode[j];
                             j++;
                        }
-                       if (typeassign(lexeme) == Type.IDENTIFIER) tokens[tokens.Count - 2].type = Type.FUNCTIONCALL;
-                       else tokens[tokens.Count-2].type = Type.FUNCTIONDECLARATION;
+                       if (typeassign(lexeme) == Type.IDENTIFIER) tokens[tokens.Count - 2].type = Type.IDENTIFIER;
+                       else tokens[tokens.Count-2].type = Type.IDENTIFIER;
                        lexeme = "";
                        i--;
                     }
@@ -160,6 +160,5 @@ namespace WindowsFormsApplication11
             }
         }
         
-        //public void view() { MessageBox.Show(tokens[0].input); }
     }
 }
