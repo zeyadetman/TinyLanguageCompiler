@@ -16,6 +16,7 @@ namespace WindowsFormsApplication11
         public List<TreeNode> children = new List<TreeNode>();
         public List<Token> list;
         public string myStart;
+        public int temp = 0;
 
         public int ind = 0;
         public Parser(){} //constructor
@@ -30,9 +31,10 @@ namespace WindowsFormsApplication11
                 if (tokenslist[i].type == Type.READ) read();
                 else if (tokenslist[i].type == Type.WRITE) { flag = true; write(); }
                 else if (tokenslist[i].type == Type.RETURN) { flag = true; ritorno(); }
-                else if (tokenslist[i].type == Type.IDENTIFIER) { assignment(); flag = true; }
+                else if (tokenslist[i].type == Type.IDENTIFIER) { bool s = assignment(); if (!s) { children.Clear(); ind = temp; function_call(); } flag = true; }
                 else if (tokenslist[i].type == Type.NUMBER || tokenslist[i].type == Type.LEFTPARENTHESES) { flag = true; expression(); }
                 else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING)) && tokenslist[i + 1].type == Type.IDENTIFIER && tokenslist[i + 2].type == Type.LEFTPARENTHESES) { flag = true; functiondec(); }
+                else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING))) { flag = true; dec_statment(); }
                 if (flag) i = ind;
                 children.Clear();
             }
@@ -41,9 +43,11 @@ namespace WindowsFormsApplication11
 
         public bool assignment()
         {
+            temp = ind;   
             myStart = "assignment";
             bool c1 = match(Type.IDENTIFIER);
             bool c2 = match(Type.ASSIGNMENTOPERATOR);
+            if (!c2 || !c1) return false; 
             bool c3 = expression();
             return c1 && c2 && c3;
         }
@@ -79,8 +83,8 @@ namespace WindowsFormsApplication11
             if (c1||c2) {
                 if (myStart == "assignment")
                 { treeprinter(root, children, "Assignment Statement"); return true; }
-                else if (myStart == "read") { treeprinter(root, children, "Read Statement"); return true; }
-                else if (myStart == "return") { treeprinter(root, children, "Return Statement"); return true; }
+                else if (myStart == "read" ) { treeprinter(root, children, "Read Statement"); return true; }
+                else if (myStart == "return" ) { treeprinter(root, children, "Return Statement"); return true; }
                 else if (myStart == "write") { treeprinter(root, children, "Write Statement"); return true; }
                 else
                 { treeprinter(root, children, "Expression"); return true; } 
@@ -164,7 +168,100 @@ namespace WindowsFormsApplication11
             if(c1 && c2) c3 = termine();
             return c1 && c2 && c3;
         }
-        
+
+        public bool function_call()
+        {
+            bool c1 = match(Type.IDENTIFIER);
+            bool c2 = function_part();
+            if (c1 && c2 ) { treeprinter(root, children, "Function Call"); return true; }
+            else return false;
+
+            
+        }
+
+        public bool function_part()
+        {
+            bool c1 = match(Type.LEFTPARENTHESES);
+            bool c2 = match(Type.IDENTIFIER);
+            bool c4 = false;
+            if(c2)while (c2)
+            {
+                bool c3 = match(Type.COMMA);
+                if (c3) c2 = match(Type.IDENTIFIER);
+                else { c4 = match(Type.RIGHTPARENTHESES); c2 = false; }
+            }
+            else c4 = match(Type.RIGHTPARENTHESES);
+                
+            if (c1 && c4)  return true; 
+            else return false;
+
+        }
+
+        public bool dec_statment()
+        {
+            bool c1 = match(Type.DATATYPEFLOAT) || match(Type.DATATYPEINT) || match(Type.DATATYPESTRING);
+            bool c2 = match(Type.IDENTIFIER);
+            bool c4 = true; 
+            bool c5 = false;
+             bool c3 = false;
+            bool c6 = false;
+            
+            if (c2) while (c4)
+                {
+                     c3 = match(Type.COMMA);
+                    c5 = match(Type.IDENTIFIER);
+                    c6 = assignment();
+                
+                    if ((c3 || c5 || c6 ) == false) c4 = false;
+                else return true;
+                     
+                }
+
+            if (c1 && (c2 || (c6 && c3))) { treeprinter(root, children, "Declaration_Statement"); return true; }
+
+            return c1 && (c2 || (c6 && c3)); 
+               
+        }
+
+        public bool if_satament()
+        {
+            bool c1 = match(Type.IF);
+            bool c2 = condition();
+            bool c3 = match(Type.THEN);
+            bool c4 = match(Type.WRITE);
+            bool c5 = true;//else_if();
+            bool c6 = true;//else_satament();
+            bool c7 = match(Type.ENDLINE);
+
+            if ((c1 && c2 && c3 && c4 && c5) || (c1 && c2 && c3 && c4 && c6) || (c1 && c2 && c3 && c4 && c7)) return true;
+            else return false;
+        }
+        public bool condition()
+        {
+            bool c1 = conditions();
+            bool c2 = or();
+            bool c3 = condition_term();
+
+            if ((c1 && c2 && c3) || c3) return true;
+            else return false;
+        }
+        public bool conditions()
+        {
+            bool c1 = expression();
+            bool c2 = match(Type.GREATERTHAN) || match(Type.LESSTHAN) || match(Type.EQUALTO) || match(Type.NOTEQUAL);
+            bool c3 = expression();
+            return c1 && c2 && c3;
+        }
+        public bool or()
+        {
+            bool c1 = match(Type.OR);
+            return c1;
+        }
+
+        public bool condition_term()
+        {
+            return true;
+        }
         public void treeprinter(TreeNode root, List<TreeNode> tn, string child)
         {
             cc1 = new TreeNode(child);
