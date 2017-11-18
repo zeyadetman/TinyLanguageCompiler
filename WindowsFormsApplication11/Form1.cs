@@ -54,13 +54,31 @@ namespace WindowsFormsApplication11
             sc.scan();
             int ind = 0;
             for (int i = 0; i < sc.tokens.Count ; i++) dataGridView1.Rows.Add(sc.tokens[i].input,sc.tokens[i].type.ToString());
-            for (int i = 0; i < sc.tokens.Count; i++) if (sc.tokens[i].type == Type.ERROR) listBox1.Items.Add("Error in Line " + (ind+1).ToString() + ", using " + sc.tokens[i].input); else if (sc.tokens[i].type == Type.NEWLINE) ind++;
+            List<int> removalList = new List<int>();
+            for (int i = 0; i < sc.tokens.Count; i++) if (sc.tokens[i].type == Type.ERROR) listBox1.Items.Add("Error in Line " + (ind + 1).ToString() + ", using " + sc.tokens[i].input); else if (sc.tokens[i].type == Type.NEWLINE) { ind++; removalList.Add(i); };
+            for (int i = 0; i < removalList.Count; i++)
+            {
+                sc.tokens.RemoveAt(removalList[i] - i);
+            }
+
             Parser ps = new Parser();
             ps.parsing(sc.tokens);
             //this.treeView1  = (TreeNode) treeView1.Clone();
             treeView1.Nodes.Add(ps.root);
             
             //-----------------------------------------
+            /*
+             * if a>b then 
+write a;
+elseif b>a then
+write b;
+else 
+write a;
+end
+             * 
+             * 
+             * 
+             */
         }
 
         private void label1_Click(object sender, EventArgs e){}
