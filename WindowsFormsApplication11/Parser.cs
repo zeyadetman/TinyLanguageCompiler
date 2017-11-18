@@ -107,12 +107,12 @@ namespace WindowsFormsApplication11
 
         public bool write()
         {
-            myStart = "write";
+            if(myStart=="") myStart = "write";
             bool c1 = match(Type.WRITE);
             bool c2 = expression();
             bool c3 = match(Type.ENDLINE);
             bool c4 = match(Type.SEMICOLON);
-            if ((c1 && c2 && c4) || (c1 && c3 && c4)) { treeprinter(root, children, "Write Statement"); ind--; return true; }
+            if ((c1 && c2 && c4) || (c1 && c3 && c4)) { if (myStart != "write") return true; else { treeprinter(root, children, "Write Statement"); ind--; return true; } }
             return ((c1 && c2 && c3) || (c3));
         }
 
@@ -163,6 +163,7 @@ namespace WindowsFormsApplication11
         public bool term()
         {
             bool c1 = factor();
+            if (c1) return true;
             bool c2 = termine();
             return c1 || c2;
         }
@@ -230,9 +231,9 @@ namespace WindowsFormsApplication11
             bool c1 = match(Type.IF);
             bool c2 = conditionStatement();
             bool c3 = match(Type.THEN);
-            bool c4 = true;
-            //bool c5 = elseIf();
-            //bool c6 = elseStatement();
+            bool c4 = write() || read() || ritorno();
+            bool c5 = elseIf();
+            bool c6 = elseStatement();
             bool c7 = match(Type.END);
             if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(root, children, "If Statement"); return true; }
             return false;
@@ -241,10 +242,11 @@ namespace WindowsFormsApplication11
         public bool elseIf()
         {
             bool c1 = match(Type.ELSEIF);
+            if (!c1) return false; 
             bool c2 = conditionStatement();
             bool c3 = match(Type.THEN);
-            bool c4 = true;
-            bool c5 = elseIf();
+            bool c4 = write() || read() || ritorno();
+            bool c5 = true;// elseIf();
             bool c6 = elseStatement();
             bool c7 = match(Type.END);
             return ((c1 && c2 && c3 && c4) && (c5 || c6 || c7));
@@ -253,7 +255,8 @@ namespace WindowsFormsApplication11
         public bool elseStatement()
         {
             bool c1 = match(Type.ELSE);
-            bool c2 = true;//statement
+            if (!c1) return false; 
+            bool c2 = write() || read() || ritorno();//statement
             bool c3 = match(Type.END);
             return c1 && c2 && c3;
         }
