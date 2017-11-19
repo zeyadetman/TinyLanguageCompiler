@@ -32,6 +32,8 @@ namespace WindowsFormsApplication11
                 if (tokenslist[i].type == Type.READ) { flag = true; read(); }
                 else if (tokenslist[i].type == Type.REPEATSTATEMENT) { repeat(); flag = true; }
                 else if (tokenslist[i].type == Type.IF) { ifSatament(); flag = true; }
+                else if (tokenslist[i].type == Type.MAIN) { mainFunction(); flag = true; }
+                else if (tokenslist[i].type == Type.LEFTCURLYBRACKETS) { functionBody(); flag = true; }
                 else if (tokenslist[i].type == Type.WRITE) { flag = true; write(); }
                 else if (tokenslist[i].type == Type.RETURN) { flag = true; ritorno(); }
                 else if (tokenslist[i].type == Type.IDENTIFIER) { bool s = assignment(); if (!s) { children.Clear(); ind = temp; functionCall(); } else { treeprinter(root, children, "Assignment Statement"); ind--; flag = true; } }
@@ -77,7 +79,7 @@ namespace WindowsFormsApplication11
             bool c1 = match(Type.RETURN);
             bool c2 = expression();
             bool c3 = match(Type.SEMICOLON);
-            if (c1 && c2 && c3) { treeprinter(root, children, "Return Statement"); ind--; return true; }
+            if (c1 && c2 && c3) { if (myStart == "return") { treeprinter(root, children, "Return Statement"); ind--; return true; } else return true; }
             return false;
         }
 
@@ -240,8 +242,49 @@ namespace WindowsFormsApplication11
             bool c5 = elseIf();
             bool c6 = elseStatement();
             bool c7 = match(Type.END);
-            if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(root, children, "If Statement"); return true; }
+            if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(root, children, "If Statement"); ind--; return true; }
             return false;
+        }
+
+        public bool functionBody()
+        {
+            if(myStart == "") myStart = "functionBody";
+            bool c1 = match(Type.LEFTCURLYBRACKETS);
+            int check = 1;
+            bool c2 = true;
+            while (c2)
+            {
+                int tmp = ind;
+                c2 = write();
+                if (!c2) { ind = tmp; tmp = ind; c2 = assignment(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = read(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = ifSatament(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = decStatment(); }
+                if (c2) check++;
+            }
+            bool c3 = ritorno();
+            bool c4 = match(Type.RIGHTCURLYBRACKETS);
+            if (c1 && check > 1 && c3 && c4) { if (myStart == "functionBody") { treeprinter(root, children, "Function Body"); ind--; return true; } else return true; }
+            return c1 && check > 1 && c3 && c4;
+        }
+
+        public bool functionStatement()
+        {
+            bool c1 = functionDec();
+            bool c2 = functionBody();
+            if (c1 && c2) { treeprinter(root, children, "Function Statement"); ind--; return true; }
+            return c1 && c2;
+        }
+
+        public bool mainFunction()
+        {
+            if (myStart == "") myStart = "mainFunction";
+            bool c1 = match(Type.MAIN);
+            bool c2 = match(Type.LEFTPARENTHESES);
+            bool c3 = match(Type.RIGHTPARENTHESES);
+            bool c4 = functionBody();
+            if(c1&& c2 && c3 && c4) { treeprinter(root, children, "Main Function"); ind--; return true; }
+            return c1 && c2 && c3 && c4;
         }
 
         public bool elseIf()
