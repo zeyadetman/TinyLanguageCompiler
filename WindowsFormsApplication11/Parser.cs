@@ -27,12 +27,14 @@ namespace WindowsFormsApplication11
             bool flag = false;
             for (int i = 0; i < tokenslist.Count; i++)
             {
+            myStart = "";
                 ind = i;
                 if (tokenslist[i].type == Type.READ) { flag = true; read(); }
+                else if (tokenslist[i].type == Type.REPEATSTATEMENT) { repeat(); flag = true; }
                 else if (tokenslist[i].type == Type.IF) { ifSatament(); flag = true; }
                 else if (tokenslist[i].type == Type.WRITE) { flag = true; write(); }
                 else if (tokenslist[i].type == Type.RETURN) { flag = true; ritorno(); }
-                else if (tokenslist[i].type == Type.IDENTIFIER) { bool s = assignment(); if (!s) { children.Clear(); ind = temp; functionCall(); } else { treeprinter(root, children, "Assignment Statement"); flag = true; } }
+                else if (tokenslist[i].type == Type.IDENTIFIER) { bool s = assignment(); if (!s) { children.Clear(); ind = temp; functionCall(); } else { treeprinter(root, children, "Assignment Statement"); ind--; flag = true; } }
                 else if (tokenslist[i].type == Type.NUMBER || tokenslist[i].type == Type.LEFTPARENTHESES) { flag = true; expression(); }
                 else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING)) && tokenslist[i + 1].type == Type.IDENTIFIER && tokenslist[i + 2].type == Type.LEFTPARENTHESES) { flag = true; functionDec(); }
                 else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING))) { flag = true; decStatment(); }
@@ -45,12 +47,13 @@ namespace WindowsFormsApplication11
         public bool assignment()
         {
             temp = ind;   
-            myStart = "assignment";
+            if(myStart == "") myStart = "assignment";
             bool c1 = match(Type.IDENTIFIER);
             bool c2 = match(Type.ASSIGNMENTOPERATOR);
             if (!c2 || !c1) { return false; } 
             bool c3 = expression();
-            bool c4 = match(Type.SEMICOLON);
+    
+           bool c4 = match(Type.SEMICOLON);
             return c1 && c2 && c3 && c4;
         }
         public bool match(Type x) {
@@ -60,7 +63,7 @@ namespace WindowsFormsApplication11
 
         public bool read()
         {
-            myStart = "read";
+            if (myStart == "") myStart = "read";
             bool c1 = match(Type.READ);
             bool c2 = match(Type.IDENTIFIER);
             bool c3 = match(Type.SEMICOLON);
@@ -70,7 +73,7 @@ namespace WindowsFormsApplication11
 
         public bool ritorno()
         {
-            myStart = "return";
+            if (myStart == "") myStart = "return";
             bool c1 = match(Type.RETURN);
             bool c2 = expression();
             bool c3 = match(Type.SEMICOLON);
@@ -84,13 +87,14 @@ namespace WindowsFormsApplication11
             bool c2 = espressione();
             if (c1||c2) {
                 if (myStart == "assignment")
-                {  return true; }
-                else if (myStart == "read" ) { treeprinter(root, children, "Read Statement"); return true; }
-                else if (myStart == "return" ) { return true; }
+                { return true; }
+                else if (myStart == "read") { treeprinter(root, children, "Read Statement"); return true; }
+                else if (myStart == "return") { return true; }
+                else if (myStart == "repeat") return true;
                 else if (myStart == "write") { return true; }
                 else if (myStart == "if") { return true; }
                 else
-                { treeprinter(root, children, "Expression"); return true; } 
+                {  return true; } 
             }
             return c1 || c2;
         }
@@ -207,6 +211,7 @@ namespace WindowsFormsApplication11
 
         public bool decStatment()
         {
+            myStart = "declarationstatement";
             bool c1 = match(Type.DATATYPEFLOAT) || match(Type.DATATYPEINT) || match(Type.DATATYPESTRING);
             bool c2 = true;
             bool c3 = true;
@@ -219,15 +224,15 @@ namespace WindowsFormsApplication11
                     else c4 = false;
                 }
             bool c5 = match(Type.SEMICOLON);
+            if (list[ind - 1].type == Type.SEMICOLON) c5 = true;
             if (c1 && !c3 && c5) { treeprinter(root, children, "Declaration_Statement"); ind--; return true; }
-
             return c1 && !c3 && c5; 
                
         }
 
         public bool ifSatament()
         {
-            myStart = "if";
+            if (myStart == "") myStart = "if";
             bool c1 = match(Type.IF);
             bool c2 = conditionStatement();
             bool c3 = match(Type.THEN);
@@ -260,6 +265,29 @@ namespace WindowsFormsApplication11
             bool c3 = match(Type.END);
             return c1 && c2 && c3;
         }
+
+        public bool repeat()
+        {
+            if (myStart == "") myStart = "repeat";
+            bool c1 = match(Type.REPEATSTATEMENT);
+            int check = 1;
+            bool c2 = true;
+            while (c2)
+            {
+                int tmp = ind;
+                c2 = write();
+                if(!c2) {ind = tmp; tmp = ind; c2 = assignment(); }
+                if(!c2) {ind = tmp; tmp = ind; c2 = read(); }
+                if(!c2) {ind = tmp; tmp = ind; c2 = ifSatament(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = decStatment(); }
+                if(c2) check++;
+            }
+            bool c3 = match(Type.UNTIL);
+            bool c4 = conditionStatement();
+            if (c1 && check > 0 && c3 && c4) { treeprinter(root, children, "Repeat Statement"); ind--; return true; }
+            return c1 && check > 0 && c3 && c4;
+        }
+
         public bool conditionStatement()
         {   
             bool c3 = false;
