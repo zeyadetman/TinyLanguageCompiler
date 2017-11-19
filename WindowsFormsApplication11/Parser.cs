@@ -11,6 +11,8 @@ namespace WindowsFormsApplication11
     class Parser
     {
         public TreeNode root = new TreeNode("Parse");
+        public TreeNode statements = new TreeNode("Statements");
+        public TreeNode functions = new TreeNode("Functions");
         public TreeNode cc1;
         Stack<char> parentheses = new Stack<char>();
         public List<TreeNode> children = new List<TreeNode>();
@@ -52,7 +54,7 @@ namespace WindowsFormsApplication11
             if(myStart == "") myStart = "assignment";
             bool c1 = match(Type.IDENTIFIER);
             bool c2 = match(Type.ASSIGNMENTOPERATOR);
-            if (!c2 || !c1) { return false; } 
+            if (!c2 || !c1) { return false; }
             bool c3 = expression();
     
            bool c4 = match(Type.SEMICOLON);
@@ -65,11 +67,12 @@ namespace WindowsFormsApplication11
 
         public bool read()
         {
+            
             if (myStart == "") myStart = "read";
             bool c1 = match(Type.READ);
             bool c2 = match(Type.IDENTIFIER);
             bool c3 = match(Type.SEMICOLON);
-            if (c1 && c2 && c3) { treeprinter(root, children, "Read Statement"); ind--; return true; }
+            if (c1 && c2 && c3) { treeprinter(statements, children, "Read Statement"); ind--; return true; }
             return false;
         }
 
@@ -79,7 +82,7 @@ namespace WindowsFormsApplication11
             bool c1 = match(Type.RETURN);
             bool c2 = expression();
             bool c3 = match(Type.SEMICOLON);
-            if (c1 && c2 && c3) { if (myStart == "return") { treeprinter(root, children, "Return Statement"); ind--; return true; } else return true; }
+            if (c1 && c2 && c3) { if (myStart == "return") { treeprinter(statements, children, "Return Statement"); ind--; return true; } else return true; }
             return false;
         }
 
@@ -90,7 +93,7 @@ namespace WindowsFormsApplication11
             if (c1||c2) {
                 if (myStart == "assignment")
                 { return true; }
-                else if (myStart == "read") { treeprinter(root, children, "Read Statement"); return true; }
+                else if (myStart == "read") { treeprinter(statements, children, "Read Statement"); return true; }
                 else if (myStart == "return") { return true; }
                 else if (myStart == "repeat") return true;
                 else if (myStart == "write") { return true; }
@@ -118,7 +121,7 @@ namespace WindowsFormsApplication11
             bool c2 = expression();
             bool c3 = match(Type.ENDLINE);
             bool c4 = match(Type.SEMICOLON);
-            if ((c1 && c2 && c4) || (c1 && c3 && c4)) { if (myStart != "write") return true; else { treeprinter(root, children, "Write Statement"); ind--; return true; } }
+            if ((c1 && c2 && c4) || (c1 && c3 && c4)) { if (myStart != "write") return true; else { treeprinter(statements, children, "Write Statement"); ind--; return true; } }
             return ((c1 && c2 && c3) || (c3));
         }
 
@@ -154,7 +157,7 @@ namespace WindowsFormsApplication11
                 else { c6 = match(Type.RIGHTPARENTHESES); c4 = false; }
             }
             //if(!c4 && c5) error
-            if (c1 && c2 && c3 && c6) { treeprinter(root, children, "Function Declaration"); return true; }
+            if (c1 && c2 && c3 && c6) { treeprinter(functions, children, "Function Declaration"); return true; }
             else return false;
 
         }
@@ -188,7 +191,7 @@ namespace WindowsFormsApplication11
         {
             bool c1 = match(Type.IDENTIFIER);
             bool c2 = functionPart();
-            if (c1 && c2 ) { treeprinter(root, children, "Function Call"); return true; }
+            if (c1 && c2 ) { treeprinter(functions, children, "Function Call"); return true; }
             else return false;
 
             
@@ -227,7 +230,7 @@ namespace WindowsFormsApplication11
                 }
             bool c5 = match(Type.SEMICOLON);
             if (list[ind - 1].type == Type.SEMICOLON) c5 = true;
-            if (c1 && !c3 && c5) { treeprinter(root, children, "Declaration_Statement"); ind--; return true; }
+            if (c1 && !c3 && c5) { treeprinter(statements, children, "Declaration_Statement"); ind--; return true; }
             return c1 && !c3 && c5; 
                
         }
@@ -242,7 +245,7 @@ namespace WindowsFormsApplication11
             bool c5 = elseIf();
             bool c6 = elseStatement();
             bool c7 = match(Type.END);
-            if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(root, children, "If Statement"); ind--; return true; }
+            if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(statements, children, "If Statement"); ind--; return true; }
             return false;
         }
 
@@ -264,7 +267,7 @@ namespace WindowsFormsApplication11
             }
             bool c3 = ritorno();
             bool c4 = match(Type.RIGHTCURLYBRACKETS);
-            if (c1 && check > 1 && c3 && c4) { if (myStart == "functionBody") { treeprinter(root, children, "Function Body"); ind--; return true; } else return true; }
+            if (c1 && check > 1 && c3 && c4) { if (myStart == "functionBody") { treeprinter(functions, children, "Function Body"); ind--; return true; } else return true; }
             return c1 && check > 1 && c3 && c4;
         }
 
@@ -272,7 +275,7 @@ namespace WindowsFormsApplication11
         {
             bool c1 = functionDec();
             bool c2 = functionBody();
-            if (c1 && c2) { treeprinter(root, children, "Function Statement"); ind--; return true; }
+            if (c1 && c2) { treeprinter(statements, children, "Function Statement"); ind--; return true; }
             return c1 && c2;
         }
 
@@ -327,7 +330,7 @@ namespace WindowsFormsApplication11
             }
             bool c3 = match(Type.UNTIL);
             bool c4 = conditionStatement();
-            if (c1 && check > 0 && c3 && c4) { treeprinter(root, children, "Repeat Statement"); ind--; return true; }
+            if (c1 && check > 0 && c3 && c4) { treeprinter(statements, children, "Repeat Statement"); ind--; return true; }
             return c1 && check > 0 && c3 && c4;
         }
 
@@ -363,15 +366,16 @@ namespace WindowsFormsApplication11
             bool c2 = condition();
             return c1 && c2;
         }
-        public void treeprinter(TreeNode root, List<TreeNode> tn, string child)
+        public void treeprinter(TreeNode rooter, List<TreeNode> tn, string child)
         {
+            //statements.Remove();
+            rooter = root;
             cc1 = new TreeNode(child);
             for(int i=0;i<tn.Count;i++){
                 cc1.Nodes.Add(tn[i]);
             }
-            //if (list[ind].type == Type.SEMICOLON) {cc1.Nodes.Add(list[ind].input); ind++;}
-            root.Nodes.Add(cc1);
-            root = new TreeNode("Parse");
+            rooter.Nodes.Add(cc1);
+            //root.Nodes.Add(rooter);
             tn.Clear();
             children.Clear();
         }

@@ -48,6 +48,8 @@ namespace WindowsFormsApplication11
             dataGridView1.Refresh();
             treeView1.Nodes.Clear();
             treeView1.Refresh();
+            listBox1.Items.Clear();
+            listBox1.Refresh();
             //--------------------------
 
             Scanner sc = new Scanner(richTextBox1.Text);
