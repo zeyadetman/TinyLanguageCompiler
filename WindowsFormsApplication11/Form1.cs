@@ -57,7 +57,7 @@ namespace WindowsFormsApplication11
             int ind = 0;
             for (int i = 0; i < sc.tokens.Count ; i++) dataGridView1.Rows.Add(sc.tokens[i].input,sc.tokens[i].type.ToString());
             List<int> removalList = new List<int>();
-            for (int i = 0; i < sc.tokens.Count; i++) if (sc.tokens[i].type == Type.ERROR) listBox1.Items.Add("Error in Line " + (ind + 1).ToString() + ", using " + sc.tokens[i].input); else if (sc.tokens[i].type == Type.NEWLINE) { ind++; removalList.Add(i); };
+            for (int i = 0; i < sc.tokens.Count; i++) if (sc.tokens[i].type == Type.ERROR) listBox1.Items.Add("Error in Line " + (ind + 1).ToString() + ", using " + sc.tokens[i].input); else if (sc.tokens[i].type == Type.NEWLINE || sc.tokens[i].type == Type.COMMENT) { ind++; removalList.Add(i); };
             for (int i = 0; i < removalList.Count; i++)
             {
                 sc.tokens.RemoveAt(removalList[i] - i);
@@ -65,6 +65,7 @@ namespace WindowsFormsApplication11
 
             Parser ps = new Parser();
             ps.parsing(sc.tokens);
+            if (ps.ll.Items.Count>0) listBox1.Items.Add(ps.ll.Items[0]);
             //this.treeView1  = (TreeNode) treeView1.Clone();
             treeView1.Nodes.Add(ps.root);
             

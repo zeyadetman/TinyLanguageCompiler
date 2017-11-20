@@ -19,6 +19,7 @@ namespace WindowsFormsApplication11
         public List<Token> list;
         public string myStart;
         public int temp = 0;
+        public ListBox ll= new ListBox();
 
         public int ind = 0;
         public Parser(){} //constructor
@@ -178,7 +179,7 @@ namespace WindowsFormsApplication11
         }
         public bool termine()
         {
-            bool c1 = match(Type.MULTIPLICATIONOPERATOR) || match(Type.DIVISIONOPERATOR);
+            bool c1 = match(Type.MULTIPLICATIONOPERATOR) || match(Type.DIVISIONOPERATOR) || match(Type.PLUSOPERATOR) || match(Type.MINUSOPERATOR);
             if (!c1) return false;
             bool c2 = factor();
             if (!c2) return false;
@@ -216,11 +217,12 @@ namespace WindowsFormsApplication11
 
         public bool decStatment()
         {
-            myStart = "declarationstatement";
+            if(myStart == "")myStart = "declarationstatement";
             bool c1 = match(Type.DATATYPEFLOAT) || match(Type.DATATYPEINT) || match(Type.DATATYPESTRING);
             bool c2 = true;
             bool c3 = true;
             bool c4 = true;
+            bool c9 = true;
             if (c2) while (c4)
                 {
                     c2 = assignment();
@@ -237,15 +239,26 @@ namespace WindowsFormsApplication11
 
         public bool ifSatament()
         {
+            int temp = ind;
             if (myStart == "") myStart = "if";
             bool c1 = match(Type.IF);
             bool c2 = conditionStatement();
             bool c3 = match(Type.THEN);
-            bool c4 = write() || read() || ritorno();
+            bool c4 = true;
+            int checker = 0;
+            while (c4)
+            {
+                int tmp = ind;
+                c4 = write();
+                if (!c4) { ind = tmp; tmp = ind; c4 = read(); }
+                if (!c4) { ind = tmp; tmp = ind; c4 = ritorno();  }
+                if (c4) checker++;
+            }
+            
             bool c5 = elseIf();
             bool c6 = elseStatement();
             bool c7 = match(Type.END);
-            if ((c1 && c2 && c3 && c4) && (c7)) { treeprinter(statements, children, "If Statement"); ind--; return true; }
+            if ((c1 && c2 && c3 && checker>0) && (c5||c6||c7)) { treeprinter(statements, children, "If Statement"); ind--; return true; }
             return false;
         }
 
@@ -253,22 +266,24 @@ namespace WindowsFormsApplication11
         {
             if(myStart == "") myStart = "functionBody";
             bool c1 = match(Type.LEFTCURLYBRACKETS);
-            int check = 1;
+            int check = 0;
             bool c2 = true;
+            int x = 0;
             while (c2)
             {
                 int tmp = ind;
                 c2 = write();
                 if (!c2) { ind = tmp; tmp = ind; c2 = assignment(); }
                 if (!c2) { ind = tmp; tmp = ind; c2 = read(); }
-                if (!c2) { ind = tmp; tmp = ind; c2 = ifSatament(); }
+                //if (!c2) { ind = tmp; tmp = ind; c2 = ifSatament(); }
                 if (!c2) { ind = tmp; tmp = ind; c2 = decStatment(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = ritorno(); if(c2) x++; }
                 if (c2) check++;
             }
-            bool c3 = ritorno();
             bool c4 = match(Type.RIGHTCURLYBRACKETS);
-            if (c1 && check > 1 && c3 && c4) { if (myStart == "functionBody") { treeprinter(functions, children, "Function Body"); ind--; return true; } else return true; }
-            return c1 && check > 1 && c3 && c4;
+            if (c1 && check > 0 && c4 && x<2) { if (myStart == "functionBody") { treeprinter(functions, children, "Function Body"); ind--; return true; } else return true; }
+            if (x >= 2) { ll.Items.Add("two return statements in same functionBody"); }
+            return c1 && check > 0 && c4 && x<2;
         }
 
         public bool functionStatement()
@@ -296,7 +311,7 @@ namespace WindowsFormsApplication11
             if (!c1) return false; 
             bool c2 = conditionStatement();
             bool c3 = match(Type.THEN);
-            bool c4 = write() || read() || ritorno();
+            bool c4 = write() || read() || ritorno() || assignment();
             bool c5 = true;// elseIf();
             bool c6 = elseStatement();
             bool c7 = match(Type.END);
@@ -306,10 +321,21 @@ namespace WindowsFormsApplication11
         public bool elseStatement()
         {
             bool c1 = match(Type.ELSE);
-            if (!c1) return false; 
-            bool c2 = write() || read() || ritorno();//statement
-            bool c3 = match(Type.END);
-            return c1 && c2 && c3;
+            if (!c1) return false;
+            bool c2 = true;
+            int check = 0;
+            while (c2)
+            {
+                int tmp = ind;
+                c2 = write();
+                if (!c2) { ind = tmp; tmp = ind; c2 = assignment(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = read(); }
+                //if (!c2) { ind = tmp; tmp = ind; c2 = ifSatament(); }
+                if (!c2) { ind = tmp; tmp = ind; c2 = decStatment(); }
+                if (c2) check++;
+            }
+            //bool c3 = match(Type.END);
+            return c1 && check>0;// && c3;
         }
 
         public bool repeat()
