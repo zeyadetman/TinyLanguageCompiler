@@ -39,6 +39,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.label4 = new System.Windows.Forms.Label();
+            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -126,7 +128,7 @@
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(607, 29);
+            this.treeView1.Location = new System.Drawing.Point(607, 31);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(318, 375);
             this.treeView1.TabIndex = 8;
@@ -141,11 +143,30 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Parse Tree";
             // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.Location = new System.Drawing.Point(931, 38);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(261, 368);
+            this.listBox2.TabIndex = 10;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(928, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(66, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Symbol Tree";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(937, 416);
+            this.ClientSize = new System.Drawing.Size(1204, 416);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.listBox2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.label3);
@@ -177,6 +198,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.Label label5;
     }
 }
 

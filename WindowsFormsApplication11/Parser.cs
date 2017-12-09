@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace WindowsFormsApplication11
 {
     //int x:=4;
-    class Parser
+    public class Parser
     {
         public TreeNode root = new TreeNode("Parse");
         public TreeNode statements = new TreeNode("Statements");
@@ -41,7 +41,7 @@ namespace WindowsFormsApplication11
                 else if (tokenslist[i].type == Type.RETURN) { flag = true; ritorno(); }
                 else if (tokenslist[i].type == Type.IDENTIFIER) { bool s = assignment(); if (!s) { children.Clear(); ind = temp; functionCall(); } else { treeprinter(root, children, "Assignment Statement"); ind--; flag = true; } }
                 else if (tokenslist[i].type == Type.NUMBER || tokenslist[i].type == Type.LEFTPARENTHESES) { flag = true; expression(); }
-                else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING)) && tokenslist[i + 1].type == Type.IDENTIFIER && tokenslist[i + 2].type == Type.LEFTPARENTHESES) { flag = true; functionDec(); }
+                else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING)) && tokenslist[i + 1].type == Type.IDENTIFIER && tokenslist[i + 2].type == Type.LEFTPARENTHESES) { flag = true; functionDec(); ind--; }
                 else if (((tokenslist[i].type == Type.DATATYPEFLOAT) || (tokenslist[i].type == Type.DATATYPEINT) || (tokenslist[i].type == Type.DATATYPESTRING))) { flag = true; decStatment(); }
                 if (flag) i = ind;
                 children.Clear();
@@ -62,7 +62,7 @@ namespace WindowsFormsApplication11
             return c1 && c2 && c3 && c4;
         }
         public bool match(Type x) {
-            if (ind<list.Count && list[ind].type == x) { children.Add(new TreeNode(list[ind].input.ToString())); ind++; return true; }
+            if (ind<list.Count && list[ind].type == x) { children.Add(new TreeNode( (list[ind].input.ToString() + '^' +  list[ind].type.ToString())  )); ind++; return true; }
             return false;
         }
 

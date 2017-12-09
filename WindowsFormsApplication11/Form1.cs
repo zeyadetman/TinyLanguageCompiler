@@ -12,8 +12,8 @@ using System.Windows.Forms;
 namespace WindowsFormsApplication11
 {
     public partial class Form1 : Form
-    {   
-
+    {
+        
         public string[] rsrvdwrds = {"read","write","repeat","until","if","elseif","else","then","return","endl","while","program","main"};
         public string[] dtatyps = { "int", "float", "string" }; 
         
@@ -50,6 +50,8 @@ namespace WindowsFormsApplication11
             treeView1.Refresh();
             listBox1.Items.Clear();
             listBox1.Refresh();
+            listBox2.Items.Clear();
+            listBox2.Refresh();
             //--------------------------
 
             Scanner sc = new Scanner(richTextBox1.Text);
@@ -68,8 +70,18 @@ namespace WindowsFormsApplication11
             if (ps.ll.Items.Count>0) listBox1.Items.Add(ps.ll.Items[0]);
             //this.treeView1  = (TreeNode) treeView1.Clone();
             treeView1.Nodes.Add(ps.root);
+
+            Symantic sy = new Symantic();
+            sy.getTree(treeView1);
+            foreach(var item in sy.symbol){
+                listBox2.Items.Add(item.ToString());
+            }
+            foreach (var item in sy.errlst)
+            {
+                listBox1.Items.Add(item.ToString());
+            }
             
-            //-----------------------------------------
+                //-----------------------------------------
             /*
              * if a>b then 
 write a;
