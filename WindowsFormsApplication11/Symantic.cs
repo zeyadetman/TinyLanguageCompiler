@@ -26,7 +26,8 @@ string s;
         public Dictionary<string, KeyValuePair<string, Type>> symbol = new Dictionary<string, KeyValuePair<string, Type>>();
         public Dictionary<int, string> errors = new Dictionary<int, string>(){
             {1,"This variable declared before!"},
-            {2,"you must assign same datatype!"}
+            {2,"you must assign same datatype!"},
+            {3,"This variable has never declared before"}
         };
         public TreeNode tree = new TreeNode();
         public List<string> errlst = new List<string>();
@@ -147,6 +148,32 @@ string s;
             symbol[s] = new KeyValuePair<string, Type>(pop, sc.data[splitter(x.Nodes[0].Text.ToString())[0]]);        
         }
 
+        public void funCall(string element, TreeNode tree){
+            
+            string[] constraintsOfFunction = { };
+            try
+            {
+                constraintsOfFunction = splitter(symbol[element].Key.ToString());
+            }
+            catch (Exception e)
+            {
+                errorHandler(3);
+                return;
+            }
+            string paramsCount = constraintsOfFunction[0];
+            foreach (var x in tree.Nodes)
+            {
+                MessageBox.Show(x.ToString());
+            }
+            for (int i = 1; i <= Convert.ToInt32(paramsCount); i++)
+            {
+                MessageBox.Show(constraintsOfFunction[i]);
+            
+            }
+            
+        }
+        
+
         internal void getTree(TreeView treeView1)
         {
             TreeNode parser = treeView1.Nodes[0];
@@ -167,8 +194,12 @@ string s;
                 else if (parser.Nodes[klm].Text.ToString() == "Function Declaration")
                 {
                     string element = splitter(parser.Nodes[klm].Nodes[1].Text.ToString())[0];
-                    //symbol.Add(element, new KeyValuePair<string, Type>("2^int^float",sc.data[splitter(parser.Nodes[klm].Nodes[0].Text.ToString())[0]]));
                     funDec(element,parser.Nodes[klm]);
+                }
+                else if (parser.Nodes[klm].Text.ToString() == "Function Call")
+                {
+                    string element = splitter(parser.Nodes[klm].Nodes[0].Text.ToString())[0];
+                    funCall(element, parser.Nodes[klm]);
                 }
 
             }
