@@ -16,3 +16,16 @@ F:\Projects\TinyLanguageCompiler\WindowsFormsApplication11\obj\Debug\tinyCompile
 F:\Projects\TinyLanguageCompiler\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.Form1.resources
 F:\Projects\TinyLanguageCompiler\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.Properties.Resources.resources
 F:\Projects\TinyLanguageCompiler\WindowsFormsApplication11\obj\Debug\tinyCompiler.csproj.GenerateResource.Cache
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\bin\Debug\WindowsFormsApplication11.exe.config
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\bin\Debug\WindowsFormsApplication11.exe
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\bin\Debug\WindowsFormsApplication11.pdb
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\tinyCompiler.csprojResolveAssemblyReference.cache
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.Form1.resources
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.Properties.Resources.resources
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\tinyCompiler.csproj.GenerateResource.Cache
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\tinyCompiler.csproj.CoreCompileInputs.cache
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.exe
+C:\Users\Besho\Downloads\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.pdb
+F:\Projects\TinyLanguageCompiler\TinyLanguageCompiler-master\WindowsFormsApplication11\bin\Debug\WindowsFormsApplication11.exe.config
+F:\Projects\TinyLanguageCompiler\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.exe
+F:\Projects\TinyLanguageCompiler\TinyLanguageCompiler-master\WindowsFormsApplication11\obj\Debug\WindowsFormsApplication11.pdb

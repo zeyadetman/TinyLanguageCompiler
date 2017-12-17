@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data;
 
 namespace WindowsFormsApplication11
 {
@@ -25,9 +26,10 @@ string s;
     {
         public Dictionary<string, KeyValuePair<string, Type>> symbol = new Dictionary<string, KeyValuePair<string, Type>>();
         public Dictionary<int, string> errors = new Dictionary<int, string>(){
-            {1,"This variable declared before!"},
-            {2,"you must assign same datatype!"},
-            {3,"This variable has never declared before"}
+            {1, "This variable declared before!"},
+            {2, "you must assign same datatype!"},
+            {3, "This variable has never declared before"},
+            {4, "Check the functions' parameters"}
         };
         public TreeNode tree = new TreeNode();
         public List<string> errlst = new List<string>();
@@ -110,6 +112,8 @@ string s;
 
         public void assStatement(string element, TreeNode parser, int klm)
         {
+
+            DataTable dta = new DataTable();
             if (symbol.Keys.Contains(element))
             {
                 Type datatype = symbol[element].Value;
@@ -122,6 +126,31 @@ string s;
                 {
                     errorHandler(2);
                 }
+                //MessageBox.Show(parser.Nodes[klm].Nodes.Count.ToString(), klm.ToString());
+                int counterloop = parser.Nodes[klm].Nodes.Count;
+                for (int i = 0; i < counterloop; i++)
+                {
+                    string counteritem = splitter(parser.Nodes[klm].Nodes[i].Text.ToString())[0];
+                    //MessageBox.Show(counteritem, "sss");
+                    if (counteritem == ":=")
+                    {
+                        string a = "";
+                        for (int j = i+1; j < counterloop-1; j++)
+                        {
+                            //MessageBox.Show(splitter(parser.Nodes[klm].Nodes[j].Text.ToString())[1]);
+                            if (splitter(parser.Nodes[klm].Nodes[j].Text.ToString())[1] == "IDENTIFIER")
+                            {
+                               // MessageBox.Show(symbol[parser.Nodes[klm].Nodes[j].Text.ToString()[0].ToString()].Key.ToString());
+                                a += symbol[parser.Nodes[klm].Nodes[j].Text.ToString()[0].ToString()].Key.ToString();
+                            }
+                            else
+                                a+=splitter(parser.Nodes[klm].Nodes[j].Text.ToString())[0];
+                            i = j;
+                        }
+                        var veqaa = dta.Compute(a, "");
+                        symbol[element] = new KeyValuePair<string, Type>(veqaa.ToString(), datatype);
+                    }
+                }
             }
             else
             {
@@ -130,6 +159,7 @@ string s;
         }
 
         public void funDec(string s,TreeNode x) {
+            
             string v = splitter(x.Nodes[0].Text.ToString())[0];
             if (v == "int" || v == "float" || v=="string")
             {
@@ -154,23 +184,54 @@ string s;
             try
             {
                 constraintsOfFunction = splitter(symbol[element].Key.ToString());
+                string paramsCount = constraintsOfFunction[0];
+                int paramsit = 1;
+                foreach (TreeNode x in tree.Nodes)
+                {
+                    if (splitter(x.Text.ToString())[1] == "IDENTIFIER" && splitter(x.Text.ToString())[0] != element && paramsit <= Convert.ToInt32(paramsCount))
+                    {
+                        if (constraintsOfFunction[paramsit] == symbol[splitter(x.Text.ToString())[0]].Value.ToString())
+                        {
+                            MessageBox.Show("Yes!");
+                        }
+                        else
+                        {
+                            errorHandler(4);
+                        }
+                        paramsit++;
+                    }
+                }
+                for (int i = 1; i <= Convert.ToInt32(paramsCount); i++)
+                {
+                    //MessageBox.Show(constraintsOfFunction[i]);
+                }
             }
             catch (Exception e)
             {
                 errorHandler(3);
                 return;
             }
-            string paramsCount = constraintsOfFunction[0];
-            foreach (var x in tree.Nodes)
-            {
-                MessageBox.Show(x.ToString());
-            }
-            for (int i = 1; i <= Convert.ToInt32(paramsCount); i++)
-            {
-                MessageBox.Show(constraintsOfFunction[i]);
             
-            }
             
+        }
+
+        public void ifcond(string element, TreeNode tree, int klm)
+        {
+            DataTable dta = new DataTable();
+            MessageBox.Show(tree.Nodes.Count.ToString());
+            int i=0;
+            string aa = "";
+            if (splitter(tree.Nodes[i].Text.ToString())[0] == "if")
+            {
+                i++;
+                while (splitter(tree.Nodes[i].Text.ToString())[0] != "then")
+                {
+                    aa += splitter(tree.Nodes[i].Text.ToString())[0];
+                    i++;
+                }
+                var veqaa = dta.Compute(aa, "");
+                MessageBox.Show(veqaa.ToString());   
+            }
         }
         
 
@@ -200,6 +261,12 @@ string s;
                 {
                     string element = splitter(parser.Nodes[klm].Nodes[0].Text.ToString())[0];
                     funCall(element, parser.Nodes[klm]);
+                }
+                else if (parser.Nodes[klm].Text.ToString() == "If Statement")
+                {
+                    MessageBox.Show("111");
+                    string element = splitter(parser.Nodes[klm].Nodes[0].Text.ToString())[0];
+                    ifcond(element, parser.Nodes[klm], klm);
                 }
 
             }
